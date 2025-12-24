@@ -1,49 +1,69 @@
-// Controller Student
-import {Request,Response} from "express"
-import * as service from "../services/student.service"
+// student.controller.ts
+import { Request, Response } from "express";
+import * as service from "../services/student.service";
 
 // CREATE
-export const create = (req:Request, res: Response) =>{
-    const student = service.createStudent(req.body)
-    res.status(201).json(student)
+export const create = async (req: Request, res: Response) => {
+    try {
+        const student = await service.createStudent(req.body);
+        res.status(201).json(student);
+    } catch (error) {
+        res.status(500).json({ message: "Error creating student", error });
+    }
 }
 
 // GET ALL
-export const getAll =(_req: Request, res: Response) => {
-    res.json(service.getStudent())
-}
-// GET BY ID
-export const getById =(req: Request, res: Response) =>{
-    const id= Number(req.params.id)
-    const student = service.getStudentById(id)
-
-    if(!student){
-        res.status(404).json({message: "Student not found"})
-        return
+export const getAll = async (_req: Request, res: Response) => {
+    try {
+        const students = await service.getStudent();
+        res.json(students);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching students", error });
     }
-    res.json(student)
+}
+
+// GET BY ID
+export const getById = async (req: Request, res: Response) => {
+    try {
+        const id = Number(req.params.id);
+        const student = await service.getStudentById(id);
+        if (!student) {
+            res.status(404).json({ message: "Student not found" });
+            return;
+        }
+        res.json(student);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching student", error });
+    }
 }
 
 // UPDATE
-export const update = (req:Request, res: Response) =>{
-    const id = Number(req.params.id)
-    const student = service.updateStudent(id, req.body)
-
-    if(!student){
-        res.status(404).json({message: "Student not found"})
-        return
+export const update = async (req: Request, res: Response) => {
+    try {
+        const id = Number(req.params.id);
+        const student = await service.updateStudent(id, req.body);
+        if (!student) {
+            res.status(404).json({ message: "Student not found" });
+            return;
+        }
+        res.json(student);
+    } catch (error) {
+        res.status(500).json({ message: "Error updating student", error });
     }
-    res.json(student)
 }
 
 // DELETE
-export const remove = (req: Request,res: Response) => {
-    const id = Number(req.params.id)
-    const delted = service.deleteStudent(id)
+export const remove = async (req: Request, res: Response) => {
+    try {
+        const id = Number(req.params.id);
+        const deletedStudent = await service.deleteStudent(id);
 
-    if(!delted){
-        res.status(404).json({message: "Student not found"})
-        return
+        if (!deletedStudent) {
+            res.status(404).json({ message: "Student not found" });
+            return;
+        }
+        res.json(deletedStudent);
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting student", error });
     }
-    res.status(204).send()
 }

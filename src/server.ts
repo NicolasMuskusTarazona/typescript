@@ -1,7 +1,11 @@
-import app from "./app"
+import app from "./app";
+import { testConnection } from "./db";
 
-const PORT = 4000
+const PORT = 5000;
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-})
+(async () => {
+  await testConnection(); 
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+})();
